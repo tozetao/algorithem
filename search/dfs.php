@@ -1,7 +1,6 @@
 <?php 
 /*
-- 输入一个数字n，输出该数字的排列
-- 例如输入2，将输出1 2，2 1
+求n个数字的多种组合，一个数字只允许被使用一次
 */
 class Chap1
 {
@@ -50,7 +49,8 @@ $chap1->dfs();
 */
 
 /**
-* dfs
+* dfs(深度优先)
+* 计算A点到B点的最短路径
 */
 class Maze
 {
@@ -64,13 +64,16 @@ class Maze
 
 	private $next;
 
+	public $min;
+	public $path;
+
 	//初始化矩阵大小
 	public function __construct($length)
 	{
 		$this->length = $length+1;
-		for($i=0; $i<$this->length; $i++)
+		for($i=0; $i<=$this->length; $i++)
 		{
-			for($j=0; $j<$this->length; $j++)
+			for($j=0; $j<=$this->length; $j++)
 			{
 				$this->martix[$i][$j] = 0;
 				$this->book[$i][$j] = 0;
@@ -85,10 +88,24 @@ class Maze
 			[0, -1], 
 			[-1, 0]
 		];
+
+		$this->min = PHP_INT_MAX;
 	}
 
-	//设置起始坐标
-	public function setStartCoordinate($x, $y)
+	private function setMinPath()
+	{
+		for ($i=0; $i<$this->length; $i++) 
+		{ 
+			for($j=0; $j<$this->length; $j++)
+			{
+				if($this->book[$i][$j] == 1)
+					$this->path[] = [$i, $j];
+			}
+		}
+	}
+
+	//设置搜索坐标
+	public function setTargetCoordinate($x, $y)
 	{
 		$this->sx = $x;
 		$this->sy = $y;
@@ -96,7 +113,58 @@ class Maze
 
 	public function dfs($x, $y, $step)
 	{
+		if($x == $this->sx && $y == $this->sy)
+		{
+			if($step < $this->min)
+			{
+				//记录最短步数
+				$this->min = $step;
+				//记录路径
+				$this->setMinPath();
+			}
+			return ;
+		}
+
 		//对当前坐标枚举，找到所有可用的下一个坐标点
-		$tx = 
+		for($i=0; $i<4; $i++)
+		{
+			$tx = $this->next[$i][0] + $x;
+			$ty = $this->next[$i][1] + $y;
+
+			//判断是否越界
+			if($tx < 1 || $tx>$this->length-1 || $ty<1 || $ty>$this->length-1)
+				continue;
+
+			
+			//判断是否障碍或者被标记
+			if($this->martix[$tx][$ty] == 0 && $this->book[$tx][$ty] == 0)
+			{
+				//标记被使用
+				$this->book[$tx][$ty] = 1;
+
+				$this->dfs($tx, $ty, $step+1);
+
+				//取消标记
+				$this->book[$tx][$ty] = 0;
+			}
+		}
 	}
 }
+
+/*
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+*/
+
+$maze = new Maze(5);
+$maze->setTargetCoordinate(5,5);
+$maze->dfs(1, 1, 1);
+
+echo '<pre/>';
+var_dump($maze->min);
+print_r($maze->path);

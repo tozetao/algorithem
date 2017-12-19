@@ -8,6 +8,7 @@ class Node
 	public $parent;
 }
 
+//广度优先
 class Maze
 {
 	//矩阵

@@ -127,3 +127,4 @@ $maze->bfs(1, 1);
 echo '<pre/>';
 var_dump($maze->flag);
 print_r(array_pop($maze->queue));
+//print_r($maze->queue);

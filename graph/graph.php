@@ -24,7 +24,8 @@ class DFSMap
 		$this->sum = 0;
         $this->list = array();
 
-		for($i=0; $i<=$n+1; $i++){
+		for($i=0; $i<=$n+1; $i++)
+        {
 			//初始化图，行代表顶点，列代表与其他顶点的关系
             //矩阵第i行第j列代表第i个顶点与第j个顶点边的关系
 			for($j=0; $j<=$n+1; $j++){
@@ -52,8 +53,6 @@ class DFSMap
         $this->book[$current] = 1;
         $this->list[] = $current;
 
-        echo $current, '<br/>';
-
         //寻找当前顶点的关联顶点
         for($i=1; $i<=$this->n; $i++)
         {
@@ -67,7 +66,8 @@ class DFSMap
     public function outputMartix()
     {
         foreach ($this->martix as $item) {
-            foreach ($item as $value) {
+            foreach ($item as $value)
+            {
                 echo $value . '&nbsp;&nbsp;';
             }
             echo '<br/>';

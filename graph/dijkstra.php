@@ -1,126 +1,93 @@
 <?php
 
-//递归将会在找到一个顶点后结束
-//或者在枚举完顶点的所有可能性后结束
-
 /**
- * 图的深度优先遍历：寻找最短路径
-*/
+ * 单源最短路径
+ *    一个顶点到其他顶点的最短路径，通过边实现松弛。
+ *    主要思想是通过边来松弛1个顶点到其余各个顶点的路程。
+ *
+ *
+ *    每次找到离源点最近的一个顶点，然后通过该顶点进行扩展，
+ *    计算源点到顶点到扩展顶点的距离，再从扩展顶点中寻找离源点最近的一个顶点进行扩展
+ *    最后得到源点到其余所有点的最短路径。
+ */
 class Dijkstra
 {
-	private $martix;
-	private $n;
-    public $min;
+    public $n;
+    public $martix;
 
+    //标记最短路径的顶点
     public $book;
-    private $paths;
 
-    private $targetVertex;
+    //存储源点到其他点的距离
+    //这里只统计了距离，但是不知道源点到其他点之间经过了哪些顶点，在算法结束后将会统计出源点到其他点的最短距离
+    public $queue;
 
-	public function __construct($n)
-	{
-		$this->n = $n;
-        $this->paths = array();
-        $this->book = array();
-        $this->martix = array();
-        $this->min = PHP_INT_MAX;
+    public function __construct($n)
+    {
+        $this->n = $n;
+        $this->queue = array();
 
-        //初始化矩阵
         for($i=0; $i<=$n+1; $i++)
         {
+            //初始化图，行代表顶点，列代表与其他顶点的关系
+            //矩阵第i行第j列代表第i个顶点与第j个顶点边的关系
             for($j=0; $j<=$n+1; $j++)
             {
-                $this->martix[$i][$j] = 0;
+                if($i == $j)
+                    $this->martix[$i][$j] = 0;
+                else
+                    $this->martix[$i][$j] = $this->max;
             }
             $this->book[$i] = 0;
-        }
-	}
 
-    public function displayBranch()
-    {
-        for($i=1; $i<=$this->n; $i++)
-        {
-            if($this->book[$i] != 0)
-                echo $i, '=>';
-        }
-        echo $this->targetVertex, '<br/>';
-    }
-
-    public function displayMartix()
-    {
-        for($i=1; $i<=$this->n; $i++)
-        {
-            for($j=1; $j<=$this->n; $j++)
-            {
-                echo $this->martix[$i][$j], '&nbsp;';
-            }
-            echo '<br/>';
+            $this->queue[] = PHP_INT_MAX;
         }
     }
 
-    public function setTargetVertex($current)
-    {
-        $this->targetVertex = $current;
-    }
-
-    public function setRelation($x, $y, $dis)
+    //无向图顶点的关联
+    public function setCoordinate($x, $y, $dis)
     {
         $this->martix[$x][$y] = $dis;
     }
 
-    //深度优先搜索，$current: 当前顶点
-    public function dfs($current, $dis)
+    //book, 标记最短路径的顶点
+    //queue, 记录源点到其他顶点的距离
+    public function exec()
     {
-        if($dis > $this->min)
-            return;
+        //标记最近顶点
+        $nearest = 0;
+        $min = PHP_INT_MAX;
 
-        if($current == $this->targetVertex)
+        for($i=1; $i<=$this->n-1; $i++)
         {
-            //更新最短距离
-            if($dis < $this->min)
+            //寻找离1号顶点最近的点
+            for($j=1; $j<=$this->n; $j++)
             {
-                $this->min = $dis;
+                //属于未知最短路径顶点 同时满足 小于上一个离1号顶点最近点的距离
+                if($this->book[$j] == 0 && $this->queue[$j]<$min)
+                {
+                    $min = $this->queue[$j];
+                    $nearest = $j;
+                }
+            }
 
-                //输出一条分支
-                $this->displayBranch();
-                return;
+            $this->book[$nearest] = 1;
+
+            //松弛最近顶点与关联顶点的边 => 以此计算源点到关联顶点边的距离
+            for($v=1; $v<=$this->n; $v++)
+            {
+                if($this->martix[$nearest][$v] < PHP_INT_MAX)
+                {
+                    if($this->queue[$v] > $this->queue[$nearest] + $this->martix[$nearest][$v])
+                    {
+                        $this->queue[$v] = $this->queue[$nearest] + $this->martix[$nearest][$v];
+                    }
+                }
             }
         }
-
-        $this->book[$current] = 1;
-
-        //枚举关联的顶点
-        for($i=1; $i<=$this->n; $i++)
-        {
-            if($this->martix[$current][$i] != 0 && $this->book[$i] == 0)
-            {
-                $this->dfs($i, $dis + $this->martix[$current][$i]);
-            }
-        }
-
-        $this->book[$current] = 0;
     }
 }
-echo '<pre/>';
 
-$obj = new Dijkstra(5);
-$obj->setRelation(1, 2, 2);
-$obj->setRelation(1, 5, 10);
-$obj->setRelation(2, 3, 3);
-$obj->setRelation(2, 5, 7);
-$obj->setRelation(3, 1, 4);
-$obj->setRelation(3, 4, 4);
-$obj->setRelation(4, 5, 5);
-$obj->setRelation(5, 3, 3);
 
-$obj->displayMartix();
-
-echo '<br/>';
-
-$obj->setTargetVertex(5);
-$obj->dfs(1, 0);
-
-echo '<br/>';
-var_dump($obj->min);
-var_dump($obj->book);
-
+//P：最短路径顶点的集合
+//Q：未知最短路径顶点的集合

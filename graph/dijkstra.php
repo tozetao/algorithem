@@ -15,6 +15,8 @@ class Dijkstra
     public $n;
     public $martix;
 
+    public $path;
+
     //标记最短路径的顶点
     public $book;
 
@@ -26,6 +28,8 @@ class Dijkstra
     {
         $this->n = $n;
         $this->queue = array();
+        $this->path = array();
+        $this->max = PHP_INT_MAX;
 
         for($i=0; $i<=$n+1; $i++)
         {
@@ -39,8 +43,6 @@ class Dijkstra
                     $this->martix[$i][$j] = $this->max;
             }
             $this->book[$i] = 0;
-
-            $this->queue[] = PHP_INT_MAX;
         }
     }
 
@@ -50,30 +52,49 @@ class Dijkstra
         $this->martix[$x][$y] = $dis;
     }
 
+    //初始化要搜点
+    public function initQueue($source)
+    {
+        $this->queue = $this->martix[$source];
+        unset($this->queue[0]);
+        unset($this->queue[$this->n+1]);
+        $this->book[$source] = 1;
+        $this->path[] = $source;
+    }
+
     //book, 标记最短路径的顶点
     //queue, 记录源点到其他顶点的距离
     public function exec()
     {
         //标记最近顶点
         $nearest = 0;
-        $min = PHP_INT_MAX;
 
+        //存储源点到最短路径顶点之间的路径
         for($i=1; $i<=$this->n-1; $i++)
         {
-            //寻找离1号顶点最近的点
+            $min = PHP_INT_MAX;
+
+            //寻找离源点最近的顶点
             for($j=1; $j<=$this->n; $j++)
             {
                 //属于未知最短路径顶点 同时满足 小于上一个离1号顶点最近点的距离
-                if($this->book[$j] == 0 && $this->queue[$j]<$min)
+                if($this->book[$j] == 0 && ($this->queue[$j] < $min))
                 {
                     $min = $this->queue[$j];
                     $nearest = $j;
                 }
+//                echo '<br/>';
             }
-
+//
+//            print_r($this->queue);
+//            print_r($this->book);
+//            echo '<br/>', '<br/>';
+//
+            $this->path[] = $nearest;
             $this->book[$nearest] = 1;
 
-            //松弛最近顶点与关联顶点的边 => 以此计算源点到关联顶点边的距离
+            //计算源点 => 最近顶点 => 与最近顶点关联的各个顶点之间的距离
+            //这个步骤叫做边的松弛
             for($v=1; $v<=$this->n; $v++)
             {
                 if($this->martix[$nearest][$v] < PHP_INT_MAX)
@@ -84,10 +105,27 @@ class Dijkstra
                     }
                 }
             }
+
         }
     }
 }
 
 
-//P：最短路径顶点的集合
-//Q：未知最短路径顶点的集合
+echo '<pre/>';
+
+$obj = new Dijkstra(6);
+$obj->setCoordinate(1, 2, 1);
+$obj->setCoordinate(1, 3, 12);
+$obj->setCoordinate(2, 3, 9);
+$obj->setCoordinate(2, 4, 3);
+$obj->setCoordinate(3, 5, 5);
+$obj->setCoordinate(4, 3, 4);
+$obj->setCoordinate(4, 5, 13);
+$obj->setCoordinate(4, 6, 15);
+$obj->setCoordinate(5, 6, 4);
+
+$obj->initQueue(1);
+$obj->exec();
+
+print_r($obj->queue);
+print_r($obj->path);

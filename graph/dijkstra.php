@@ -6,8 +6,8 @@
  * Dijkstra的主要思想是通过边来松弛1号顶点到其余个个顶点的距离
  *
  * 每次找到离源点最近的一个顶点，然后通过该顶点进行扩展，
- * 松弛源点到最近的顶点再到扩展顶点的距离，从扩展的顶点寻找离源点最近
- *    最后得到源点到其余所有点的最短路径。
+ * 松弛源点到最近的顶点再到扩展顶点的距离，从扩展的顶点寻找离源点最近的顶点，
+ * 以此顶点继续扩展，最后得到源点到其余所有点的最短路径。
  */
 class Dijkstra
 {
@@ -55,10 +55,16 @@ class Dijkstra
     public function initQueue($source)
     {
         $this->queue = $this->martix[$source];
+        $this->book[$source] = 1;
+
+        for($i=1; $i<=$this->n; $i++)
+        {
+            $this->path[$i] = $source . '->' . $i;
+        }
+
         unset($this->queue[0]);
         unset($this->queue[$this->n+1]);
-        $this->book[$source] = 1;
-        $this->path[] = $source;
+
     }
 
     //book, 标记最短路径的顶点
@@ -82,14 +88,8 @@ class Dijkstra
                     $min = $this->queue[$j];
                     $nearest = $j;
                 }
-//                echo '<br/>';
             }
-//
-//            print_r($this->queue);
-//            print_r($this->book);
-//            echo '<br/>', '<br/>';
-//
-            $this->path[] = $nearest;
+
             $this->book[$nearest] = 1;
 
             //计算源点 => 最近顶点 => 与最近顶点关联的各个顶点之间的距离
@@ -101,6 +101,11 @@ class Dijkstra
                     if($this->queue[$v] > $this->queue[$nearest] + $this->martix[$nearest][$v])
                     {
                         $this->queue[$v] = $this->queue[$nearest] + $this->martix[$nearest][$v];
+                        //2-3 2-4
+                        //2-4-3 2-4-5 2-4-6
+
+                        //待更新顶点路径 = 最近顶点路径 + 当前顶点
+                        $this->path[$v] = $this->path[$nearest] . '->' . $v;
                     }
                 }
             }
@@ -121,10 +126,13 @@ $obj->setCoordinate(3, 5, 5);
 $obj->setCoordinate(4, 3, 4);
 $obj->setCoordinate(4, 5, 13);
 $obj->setCoordinate(4, 6, 15);
-$obj->setCoordinate(5, 6, 4);
+$obj->setCoordinate(6, 5, 4);
 
 $obj->initQueue(1);
 $obj->exec();
 
+//显示最短路径
 print_r($obj->queue);
+
+//显示经过的顶点：1 2 4 3 5 6
 print_r($obj->path);

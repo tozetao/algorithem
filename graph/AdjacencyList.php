@@ -76,7 +76,24 @@ class AdjacencyList
         $this->edges++;
     }
 
+    public function display()
+    {
+        for($i=1; $i<=$this->n; $i++)
+        {
+            $k = $this->first[$i];
 
+            while($k != -1)
+            {
+                echo 'u: ' . $this->u[$k] . '; ';
+                echo 'v: ' . $this->v[$k] . '; ';
+                echo 'w: ' . $this->w[$k] . '; ';
+                echo '<br/>';
+                $k = $this->next[$k];
+            }
+            echo '---------------------';
+            echo '<br/>';
+        }
+    }
 }
 
 
@@ -94,6 +111,7 @@ print_r($o->w);
 print_r($o->first);
 print_r($o->next);
 
+$o->display();
 
 /*
 u v w

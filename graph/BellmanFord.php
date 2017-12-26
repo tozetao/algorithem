@@ -17,6 +17,8 @@ class BellmanFord
     //边的数量
     public $m;
 
+    public $path;
+
     public function __construct($n, $m)
     {
         $this->dis = array();
@@ -30,6 +32,18 @@ class BellmanFord
         $this->u[$this->edges] = $x;
         $this->v[$this->edges] = $y;
         $this->w[$this->edges] = $w;
+        $this->edges++;
+    }
+
+    public function setStartVertex($source)
+    {
+        for($i=1; $i<=$this->n; $i++)
+        {
+            $this->dis[$i] = PHP_INT_MAX;
+            $this->path[$i] = $source;
+        }
+
+        $this->dis[$source] = 0;
     }
 
     public function exec()
@@ -44,16 +58,30 @@ class BellmanFord
                 if($this->dis[$endVertex] > $this->dis[$startVertex] + $this->w[$i])
                 {
                     $this->dis[$endVertex] = $this->dis[$startVertex] + $this->w[$i];
+                    $this->path[$endVertex] = $this->path[$startVertex] . '=>' . $endVertex;
                 }
             }
         }
     }
-
-
 }
 
+$obj = new BellmanFord(5, 5);
+$obj->setEdge(1, 2, -3);
+$obj->setEdge(1, 5, 5);
+$obj->setEdge(2, 3, 2);
+$obj->setEdge(3, 4, 3);
+$obj->setEdge(4, 5, 2);
 
+$obj->setStartVertex(1);
+$obj->exec();
 
+echo '<pre/>';
+
+//输出最短距离
+print_r($obj->dis);
+
+//输出路径
+print_r($obj->path);
 
 
 
@@ -79,9 +107,15 @@ class BellmanFord
 
 
 Bellan-Ford的优化
-    1. 在对所有边松弛过后，会有一些顶点已经确定了最短路径的值，
-       它不会受到松弛的影响，但是算法仍然要判断是否进行松弛，
-       所以只需要对最短路径估计值发生变化了的顶点的相邻边执行松弛操作。
+    1. 在对所有边松弛过后，会有一些顶点已经确定了最短路径的值，它们是不会受到松弛的影响，但是算法仍然要判断是否进行松弛，
+       所以算法只需要对最短路径估计值发生变化了的顶点的相邻边执行松弛操作，
+
+       例如：
+       I  : 1 2 3 4 5
+       DIS: 0 1 - - 5
+       顶点1是源点，1-2和1-5俩条边与源点松弛后使得源点到顶点2和顶点5之间的最短路径估算值变短了，
+       因此只有通过2和5这俩个顶点的出边才可能使得源点到其他顶点的距离更短。
+
 
     2. Bellman-Ford经常会在n-1次松弛前就已经计算出了源点的最短路径，
        所以将上一次松弛的数据与当前松弛的数据进行比较，如果一致则返回结果。

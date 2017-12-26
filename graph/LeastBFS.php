@@ -7,7 +7,7 @@ class Vertex
 }
 
 /**
- * 图的广度优先遍历：最少顶点
+ * 寻找指定顶点(图的广度优先遍历)
  */
 class LeastBFS
 {

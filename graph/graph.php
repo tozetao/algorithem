@@ -50,6 +50,7 @@ class DFSMap
             return;
 
         $this->sum++;
+        //标记顶点
         $this->book[$current] = 1;
         $this->list[] = $current;
 

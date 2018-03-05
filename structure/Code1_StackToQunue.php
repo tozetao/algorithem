@@ -1,12 +1,12 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: zetao
- * Date: 2018/3/4
- * Time: 20:29
+include 'Code1_Stack.php';
+
+/*
+ * 栈转队列
+ *     使用俩个栈进行实现。
  */
-class Code1_StackToQunue
+class StackToQunue
 {
 
 }

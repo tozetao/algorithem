@@ -64,6 +64,11 @@ class Qunue
         return $temp;
     }
 
+    public function size()
+    {
+        return $this->size;
+    }
+
     public function display()
     {
         foreach ($this->array as $item)

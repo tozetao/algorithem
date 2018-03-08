@@ -48,14 +48,13 @@ class ArrayList
         return $temp;
     }
 
-    public function peek()
-    {
-
-    }
-
     public function display()
     {
-
+        while(!empty($this->root))
+        {
+            echo $this->root->data, '<br/>';
+            $this->root = $this->root->next;
+        }
     }
 }
 

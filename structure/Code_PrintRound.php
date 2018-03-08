@@ -7,14 +7,17 @@ class Code_PrintRound
 {
     private $martix;
 
-    private $startPoint;
-    private $endPoint;
+
+    private $tR;
+    private $tC;
+    private $bR;
+    private $bC;
 
     private $flag;
 
     public function __construct()
     {
-        $this->flag = true;
+
         /*
             1   2   3   4
             5   6   7   8
@@ -22,53 +25,66 @@ class Code_PrintRound
             13  14  15  16
         */
         $this->martix = [
-            [1, 2],
+            /*[1, 2],
             [3, 4],
             [5, 6],
             [7, 20],
             [7, 10],
-            [11, 29]
+            [11, 29]*/
+
+            [5, 6, 3],
+            [7, 20, 3],
+//            [7, 10, 4],
         ];
 
-        $this->startPoint = [
-            'x' => 0,
-            'y' => 0
-        ];
-        $this->endPoint = [
-            'x' => count($this->martix)-1,
-            'y' => count(current($this->martix))-1,
-        ];
+        $this->tC = 0;
+        $this->tR = 0;
+        $this->bC = count(current($this->martix)) - 1;
+        $this->bR = count($this->martix) - 1;
+        $this->flag = true;
     }
 
     public function display()
     {
-        while($this->startPoint['x'] <= $this->endPoint['x'])
+        $endR = count($this->martix);
+        $endC = count(current($this->martix));
+
+        while($this->tR <= $this->bR && $this->tC <= $this->bC)
         {
-            for($i = $this->startPoint['y']; $i < $this->endPoint['y']; $i++)
+//            echo $this->tR, '&nbsp;', $this->tC, '&nbsp;&nbsp;', $this->bR, '&nbsp;' . $this->bC, '<br/>';
+
+            //只有一行数据
+            if($this->tR == $endR-1)
             {
-                echo $this->martix[$this->startPoint['x']][$i], '&nbsp;&nbsp;&nbsp;';
+                for($i=$this->tC; $i<$endC1; $i++)
+                    echo $this->martix[$this->tR][$i], '&nbsp;&nbsp;&nbsp;';
+
+            }
+            //只有一列数据
+            else if($this->tC == $endC-1)
+            {
+                for($i=$this->tR; $i<$endR; $i++)
+                    echo $this->martix[$i][$this->tC], '&nbsp;&nbsp;&nbsp;';
+            }else
+            {
+                for($i=$this->tC; $i<$this->bC; $i++)
+                    echo $this->martix[$this->tR][$i], '&nbsp;&nbsp;&nbsp;';
+
+                for($i=$this->tR; $i<$this->bR; $i++)
+                    echo $this->martix[$i][$this->bC], '&nbsp;&nbsp;&nbsp;';
+
+                for($i=$this->bC; $i>$this->tC; $i--)
+                    echo $this->martix[$this->bR][$i], '&nbsp;&nbsp;&nbsp;';
+
+                for($i=$this->bR; $i>$this->tR; $i--)
+                    echo $this->martix[$i][$this->tC], '&nbsp;&nbsp;&nbsp;';
+
             }
 
-            for($j = $this->startPoint['x']; $j < $this->endPoint['x']; $j++)
-            {
-                echo $this->martix[$j][$this->endPoint['y']], '&nbsp;&nbsp;&nbsp;';
-            }
-
-            for($k = $this->endPoint['y']; $k > $this->startPoint['y']; $k--)
-            {
-                echo $this->martix[$this->endPoint['x']][$k], '&nbsp;&nbsp;&nbsp;';
-            }
-
-            for($f = $this->endPoint['x']; $f > $this->startPoint['x']; $f--)
-            {
-                echo $this->martix[$f][$this->startPoint['y']], '&nbsp;&nbsp;&nbsp;';
-            }
-
-            //更改坐标
-            $this->startPoint['x']++;
-            $this->startPoint['y']++;
-            $this->endPoint['x']--;
-            $this->endPoint['y']--;
+            $this->tR++;
+            $this->tC++;
+            $this->bR--;
+            $this->bC--;
         }
     }
 }

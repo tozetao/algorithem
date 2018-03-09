@@ -19,10 +19,12 @@ class ArrayList
 {
     private $root;
     private $currentNode;
+    private $size;
 
     public function __construct()
     {
         $this->currentNode = null;
+        $this->size = 0;
     }
 
     public function insert($data)
@@ -37,6 +39,12 @@ class ArrayList
 
         $this->currentNode->next = $newNode;
         $this->currentNode = $newNode;
+        $this->size++;
+    }
+
+    public function peek()
+    {
+        return $this->root;
     }
 
     public function remove()
@@ -45,6 +53,7 @@ class ArrayList
 
         $temp = $this->root;
         $this->root = $this->root->next;
+        $this->size--;
         return $temp;
     }
 
@@ -55,6 +64,11 @@ class ArrayList
             echo $this->root->data, '<br/>';
             $this->root = $this->root->next;
         }
+    }
+
+    public function size()
+    {
+        return $this->size;
     }
 }
 

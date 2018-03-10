@@ -21,7 +21,7 @@ include "Code1_Stack.php";
  */
 class Code2_IsPalindromeList
 {
-    private $arrayList;
+    public $arrayList;
 
     public function __construct($arrayList)
     {
@@ -37,7 +37,7 @@ class Code2_IsPalindromeList
 
     public function check()
     {
-        //指向链表头节点
+        //寻找中间节点
         $slow = $this->arrayList->peek();
         $fast = $this->arrayList->peek();
 
@@ -47,19 +47,89 @@ class Code2_IsPalindromeList
             $fast = $fast->next->next;
         }
 
+        //将左右俩部分节点进行对比
         $stack = new Stack(10);
-        while($slow != null)
+        while($slow->next != null)
         {
             $stack->push($slow->next);
             $slow = $slow->next;
         }
 
-//        while()
+        $link = $this->arrayList->peek();
+
+        while(!$stack->isEmpty())
+        {
+            if($stack->pop()->data != $link->data)
+                return false;
+
+            $link = $link->next;
+        }
+        return true;
     }
 
     public function O1Check()
     {
-        
+        //寻找中间节点
+        $slow = $this->arrayList->peek();
+        $fast = $this->arrayList->peek();
+
+        while($fast->next != null && $fast->next->next != null)
+        {
+            $slow = $slow->next;
+            $fast = $fast->next->next;
+        }
+
+        //1. 取得右半节点的头节点
+        //2. 将右半部分链表的指针指向方向逆反
+
+        $flat = true;
+
+        $start = $this->arrayList->peek();
+        $current = $slow->next;
+        $slow->next = null;
+
+        $reverseNode = $this->reverseNode($current);
+        $tmp = $reverseNode;
+
+        while($reverseNode != null)
+        {
+            if($reverseNode->data != $start->data)
+            {
+                $flat = false;
+                break;
+            }
+
+            $reverseNode = $reverseNode->next;
+            $start = $start->next;
+        }
+
+        $current = $this->reverseNode($tmp);
+        $slow->next = $current;
+        return $flat;
+    }
+
+    /*
+     * 反转一个链表
+     * @param $current          当前节点项
+     * @param null $provious    默认指向的上一个节点
+     * @return mixed
+     */
+    public function reverseNode($current, $provious = null)
+    {
+        while(($tmp = $current->next) != null)
+        {
+            $current->next = $provious;
+            $provious = $current;
+            $current = $tmp;
+        }
+
+        $current->next = $provious;
+        return $current;
+    }
+
+    public function display()
+    {
+        $this->arrayList->display();
     }
 }
 
@@ -67,11 +137,19 @@ $arrayList = new ArrayList();
 $arrayList->insert(1);
 $arrayList->insert(2);
 $arrayList->insert(3);
-//$arrayList->insert(4);
-$arrayList->insert(3);
+$arrayList->insert(4);
+//$arrayList->insert(3);
 $arrayList->insert(2);
 $arrayList->insert(1);
 
 echo '<pre/>';
-$list = new Code2_IsPalindromeList($arrayList);
-print_r($list->check());
+$obj = new Code2_IsPalindromeList($arrayList);
+//var_dump($obj->check());
+
+var_dump($obj->O1Check());
+$obj->display();
+
+//
+//$reverse = $obj->reverseNode($arrayList->peek());
+//print_r($reverse);
+//$zheng = $obj->reverseNode($reverse);

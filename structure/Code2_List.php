@@ -18,12 +18,12 @@ class Node
 class ArrayList
 {
     private $root;
-    private $currentNode;
+    private $end;
     private $size;
 
     public function __construct()
     {
-        $this->currentNode = null;
+        $this->end = null;
         $this->size = 0;
     }
 
@@ -34,17 +34,22 @@ class ArrayList
         if(empty($this->root))
         {
             $this->root = $newNode;
-            $this->currentNode = $newNode;
+            $this->end = $newNode;
         }
 
-        $this->currentNode->next = $newNode;
-        $this->currentNode = $newNode;
+        $this->end->next = $newNode;
+        $this->end = $newNode;
         $this->size++;
     }
 
     public function peek()
     {
         return $this->root;
+    }
+
+    public function last()
+    {
+        return $this->end;
     }
 
     public function remove()
@@ -77,10 +82,10 @@ $list->insert(1);
 $list->insert(2);
 $list->insert(3);
 $list->insert(4);
-
+/*
 echo '<pre/>';
 var_dump($list->remove()->data);
 var_dump($list->remove()->data);
 var_dump($list->remove()->data);
 var_dump($list->remove()->data);
-var_dump($list->remove());
+var_dump($list->remove());*/

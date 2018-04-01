@@ -26,9 +26,9 @@ class Node
  */
 class AbstractSearchBinaryTree
 {
-    protected $root;
+    public $root;
 
-    private function createNode($data, $parent, $left, $right)
+    protected function createNode($data, $parent, $left, $right)
     {
         return new Node($data, $parent, $left, $right);
     }
@@ -166,6 +166,21 @@ class AbstractSearchBinaryTree
             $newNode->parent = $nodeToReplace->parent;
 
         return $newNode;
+    }
+
+    private function preorder($node)
+    {
+        if($node == null) return null;
+
+        echo $node->data, "\n";
+
+        $this->preorder($node->left);
+        $this->preorder($node->right);
+    }
+
+    public function preorderDisplay()
+    {
+        $this->preorder($this->root);
     }
 }
 

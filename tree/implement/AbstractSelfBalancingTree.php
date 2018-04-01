@@ -27,11 +27,9 @@ class AbstractSelfBalancingTree extends AbstractSearchBinaryTree
         }
 
         //2. 将平衡节点的左分支挂到旋转节点的右分支上
+        $node->right = $balancingNode->left;
         if($balancingNode->left != null)
-        {
-            $node->right = $balancingNode->left;
             $balancingNode->left->parent = $node;
-        }
 
         //3. 将旋转节点挂在平衡节点的左分支上
         $balancingNode->left = $node;
@@ -60,9 +58,9 @@ class AbstractSelfBalancingTree extends AbstractSearchBinaryTree
         }
 
         //2. 将平衡节点的右分支挂到旋转节点的左分支上
+        $node->left = $balancingNode->right;
         if($balancingNode->right != null)
         {
-            $node->left = $balancingNode->right;
             $balancingNode->right->parent = $node;
         }
 

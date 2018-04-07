@@ -182,6 +182,23 @@ class AbstractSearchBinaryTree
     {
         $this->preorder($this->root);
     }
+
+    private function inorder($node)
+    {
+        if($node == null)
+            return;
+
+        $this->inorder($node->left);
+
+        echo $node->data, "\n";
+
+        $this->inorder($node->right);
+    }
+
+    public function inorderDisplay()
+    {
+        $this->inorder($this->root);
+    }
 }
 
 

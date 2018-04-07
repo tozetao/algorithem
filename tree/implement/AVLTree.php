@@ -111,16 +111,51 @@ class AVLTree extends AbstractSelfBalancingTree
         $node->height = 1 + max($leftHeight, $rightHeight);
     }
 
+    private function recomputeNode($node)
+    {
+        while($node != null)
+        {
+            $this->updateHeight($node);
+            $node = $node->parent;
+        }
+    }
+
     //删除
     public function delete($data)
     {
+        $deleteNode = parent::search($data);
 
+        if($deleteNode != null)
+        {
+            $succerorNode = parent::delete($data);
+
+            if($succerorNode == null)
+            {
+                //被删除节点可能是叶子节点
+                $parentNode = $deleteNode->parent;
+                $this->recomputeNode($parentNode);
+                $this->rebalance($parentNode);
+            }
+            else
+            {
+                //被删除节点拥有孩子节点
+                $minimum = $succerorNode->right == null
+                    ? $succerorNode : $this->getMinium($succerorNode->right);
+
+                $this->recomputeNode($minimum);
+                $this->rebalance($minimum);
+            }
+            return $succerorNode;
+        }
+
+        return null;
     }
 }
 echo '<pre/>';
 
 $tree = new AVLTree();
 
+/*
 $tree->insert(5);
 $tree->insert(6);
 $tree->insert(7);
@@ -132,4 +167,30 @@ $tree->insert(3);
 $tree->insert(4);
 
 //print_r($tree);
+
+$r = $tree->delete(7);
+//$tree->preorderDisplay();
+$tree->inorderDisplay();
+*/
+
+$tree->insert(10);
+$tree->insert(4);
+$tree->insert(2);
+$tree->insert(1);
+$tree->insert(3);
+$tree->insert(7);
+$tree->insert(6);
+$tree->insert(9);
+$tree->insert(15);
+$tree->insert(12);
+$tree->insert(11);
+$tree->insert(20);
+$tree->insert(16);
+$tree->insert(18);
+$tree->insert(35);
+$tree->insert(19);
+
+$tree->delete(16);
+//$tree->inorderDisplay();
 $tree->preorderDisplay();
+

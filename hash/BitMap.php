@@ -44,7 +44,14 @@ class BitMap
 
     public function getbit($offset)
     {
+        $index = floor($offset, $this->size);
+        $move  = $offset % $this->size;
 
+        $t = $this->bitMap[$index];
+        $m = 1 << $move;
+        $t = $t & (1<<$move);
+
+        return $m == $t ? 1 : 0;
     }
 }
 

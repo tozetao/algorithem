@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zetao
- * Date: 2018/2/26
- * Time: 21:46
- */
 
 function BubbleSort($array){
     if(empty($array))
